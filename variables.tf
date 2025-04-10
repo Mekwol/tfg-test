@@ -16,15 +16,15 @@ variable "root_ou_id" {}
 #myip
 #variable "my_ip" {}
 
-variable "linux_ip"{}
+variable "linux_ip" {}
 
 #variable "org_id" {
- # description = "AWS Organization ID"
-  #type        = string
+# description = "AWS Organization ID"
+#type        = string
 #}
 
 variable "tfg_test_account1_id" {
- description = "AWS Account ID for tfg-test-account1"
+  description = "AWS Account ID for tfg-test-account1"
   type        = string
 }
 

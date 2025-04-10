@@ -10,16 +10,16 @@ resource "aws_security_group" "bastion_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.my_ip}/20"]  
+    cidr_blocks = ["${var.my_ip}/20"]
   }
-  
 
-    ingress {
+
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-     cidr_blocks = ["${var.linux_ip}/32"]  
-}
+    cidr_blocks = ["${var.linux_ip}/32"]
+  }
 
 
   # Allow all outbound traffic

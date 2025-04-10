@@ -12,7 +12,7 @@ root_ou_id = "r-vbtt"
 
 tfg_test_account1_id = "900720408661"
 delegated_account_id = "628789204422"
-my_ip                ="66.98.96.0"
-linux_ip             ="3.87.110.50"
+my_ip                = "66.98.96.0"
+linux_ip             = "3.87.110.50"
 
 
