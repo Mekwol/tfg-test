@@ -11,16 +11,17 @@ provider "aws" {
   }
 }
 
-terraform {
-  backend "remote" {
-    organization = "TFG-Test"
-    workspaces {
-      name = "tfg-test-workspace"
-    }
-  }
 
 terraform {
-  required_providers {
+ 
+    backend "remote" {
+     organization = "TFG-Test"
+       workspaces {
+       name = "tfg-test-workspace"
+     }
+    }
+
+   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.20"
