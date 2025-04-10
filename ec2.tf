@@ -27,18 +27,18 @@ resource "aws_instance" "bastion" {
 }
 
 # Create a private instance in private subnet
-resource "aws_instance" "private" {
-  provider               = aws.tfg-test-account1-region1
-  ami                    = "ami-0e1c5d8c23330dee3" # Amazon Linux 2023 AMI for us-east-1
-  instance_type          = "t2.micro"
-  subnet_id              = aws_subnet.region1_private_subnet1.id
-  vpc_security_group_ids = [aws_security_group.private_sg.id]
-  key_name               = aws_key_pair.generated_key.key_name
-  tags = {
-    Name        = "TFG-Test-Private"
-    Environment = "Test"
-  }
-}
+#resource "aws_instance" "private" {
+ # provider               = aws.tfg-test-account1-region1
+  #ami                    = "ami-0e1c5d8c23330dee3" # Amazon Linux 2023 AMI for us-east-1
+  #instance_type          = "t2.micro"
+  #subnet_id              = aws_subnet.region1_private_subnet1.id
+  #vpc_security_group_ids = [aws_security_group.private_sg.id]
+  #key_name               = aws_key_pair.generated_key.key_name
+  #tags = {
+   # Name        = "TFG-Test-Private"
+   # Environment = "Test"
+  #}
+#}
 
 
 
