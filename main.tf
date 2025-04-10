@@ -12,6 +12,14 @@ provider "aws" {
 }
 
 terraform {
+  backend "remote" {
+    organization = "TFG-Test"
+    workspaces {
+      name = "tfg-test-workspace"
+    }
+  }
+
+terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
