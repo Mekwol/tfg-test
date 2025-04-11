@@ -14,12 +14,12 @@
 
 terraform {
  
-   # backend "remote" {
-     #organization = "TFG-Test"
-       #workspaces {
-      # name = "tfg-test-workspace"
-     #}
-    #}
+    backend "remote" {
+     organization = "TFG-Test"
+       workspaces {
+       name = "tfg-test-workspace"
+     }
+    }
 
    required_providers {
     aws = {
