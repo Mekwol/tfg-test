@@ -1,6 +1,6 @@
+# Default provider that uses OIDC credentials from Terraform Cloud
 provider "aws" {
   region = var.aws_regions[0]
-  # Default provider will use the OIDC credentials from Terraform Cloud
 }
 
 provider "aws" {
