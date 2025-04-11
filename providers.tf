@@ -5,8 +5,9 @@ provider "aws" {
     assume_role_with_web_identity {
     role_arn           = "arn:aws:iam::641067676382:role/terraform-cloud-role"
     session_name       = "terraform-cloud"
-    web_identity_token = var.TFC_WORKLOAD_IDENTITY_TOKEN
+    web_identity_token_file = "${path.module}/token.txt"
   }
+  
 }
 
 provider "aws" {
