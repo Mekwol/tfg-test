@@ -23,11 +23,6 @@ variable "linux_ip" {}
 #type        = string
 #}
 
-variable "TFC_WORKLOAD_IDENTITY_TOKEN" {
-  type        = string
-  description = "JWT token provided by Terraform Cloud for OIDC authentication"
-  default     = null # This will be filled automatically by Terraform Cloud
-}
 
 variable "tfg_test_account1_id" {
   description = "AWS Account ID for tfg-test-account1"
