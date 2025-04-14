@@ -1,26 +1,25 @@
 variable "aws_regions" {
-  description = "List of AWS regions to deploy resources"
-  type        = list(string)
-  default     = ["us-east-1", "us-east-2"]
+  type    = list(string)
+  default = ["us-east-1", "us-east-2"]
 }
 
 variable "aws_region" {
-  description = "Primary AWS region for deployment"
+  description = "Primary AWS region"
   type        = string
 }
 
 variable "root_ou_id" {
-  description = "AWS Organization Root OU ID"
+  description = "AWS Organizations Root OU ID"
   type        = string
 }
 
 variable "my_ip" {
-  description = "Your public IP address for SSH access"
+  description = "Your IP address for security group access"
   type        = string
 }
 
 variable "linux_ip" {
-  description = "Linux bastion IP address for SSH access"
+  description = "Linux instance IP for security group access"
   type        = string
 }
 
