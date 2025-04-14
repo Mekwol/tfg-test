@@ -25,13 +25,23 @@ resource "aws_networkmanager_core_network" "core_network" {
   }
 }
 
-# Define a minimal valid Core Network Policy
+# Define a minimal valid Core Network Policy with edges
 locals {
   initial_core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
-      asn-ranges       = ["64512-65534"]
-      edge-locations   = ["us-east-1", "us-east-2"]
+      asn-ranges     = ["64512-65534"]
+      edge-locations = ["us-east-1", "us-east-2"]
+      edges = [
+        {
+          location = "us-east-1"
+          asn      = 64512
+        },
+        {
+          location = "us-east-2"
+          asn      = 64513
+        }
+      ]
     }
     segments = [
       {
@@ -54,21 +64,21 @@ locals {
         ]
         action = {
           association-method = "constant"
-          segment           = "segment1"
+          segment            = "segment1"
         }
       }
     ]
   })
 }
 
-# Attach the minimal policy to the Core Network
+# Attach the policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
   policy_document = local.initial_core_network_policy
 }
 
-# Attach VPCs to the Core Network - Simplify to get basic functionality working
+# Attach VPCs to the Core Network
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider        = aws.delegated_account
   subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
@@ -113,3 +123,4 @@ resource "aws_route" "region2_private_to_cloudwan" {
   core_network_arn       = aws_networkmanager_core_network.core_network.arn
   depends_on             = [aws_networkmanager_vpc_attachment.region2_prod_attachment]
 }
+
