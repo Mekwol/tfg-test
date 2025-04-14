@@ -70,29 +70,39 @@ locals {
 }
 
 # Apply Core Network Policy via CLI after Core Network creation
+
+
 resource "null_resource" "apply_core_network_policy" {
   provisioner "local-exec" {
     command = <<EOT
-      
-     echo "Waiting for core network to be fully available..."
-      sleep 60
+      echo "Waiting for core network to become available..."
 
-    aws networkmanager put-core-network-policy \
+      # Poll until the core network is available (up to 15 minutes)
+      for i in {1..30}; do
+        aws networkmanager get-core-network --core-network-id ${aws_networkmanager_core_network.core_network.id} && break || sleep 30
+      done
+
+      echo '${local.initial_core_network_policy}' > core_network_policy.json
+
+      aws networkmanager put-core-network-policy \
         --core-network-id ${aws_networkmanager_core_network.core_network.id} \
-        --policy-document '${local.initial_core_network_policy}'
+        --policy-document file://core_network_policy.json
     EOT
 
     environment = {
-      AWS_REGION = "us-east-1" # Replace if needed
+      AWS_REGION = "us-east-1"
     }
   }
 
   triggers = {
-    always_run = "${timestamp()}"
+    always_run = timestamp()
   }
 
   depends_on = [aws_networkmanager_core_network.core_network]
 }
+
+
+
 
 # Attach VPCs to the Core Network
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
