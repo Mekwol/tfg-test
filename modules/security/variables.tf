@@ -16,7 +16,6 @@ variable "linux_ip" {
 variable "my_ip" {
   description = "my_ip"
   type        = string
-i
 }
 
 variable "vpc_id_region1" {
