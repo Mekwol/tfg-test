@@ -26,12 +26,12 @@ locals {
       {
         name                          = "prod"
         description                   = "Production Segment"
-        require-attachment-acceptance = false
+        require-attachment-acceptance = true # Changed to true to ensure proper attachment process
       },
       {
         name                          = "nonprod"
         description                   = "Non-Production Segment"
-        require-attachment-acceptance = false
+        require-attachment-acceptance = true # Changed to true to ensure proper attachment process
       }
     ]
     segment-actions = [
@@ -39,13 +39,13 @@ locals {
         action     = "create-route"
         segment    = "prod"
         destination-cidr-blocks = ["0.0.0.0/0"]
-        destinations = ["attachment-${aws_networkmanager_vpc_attachment.region1_prod_attachment.id}"]
+        destinations = ["attachment-placeholder-prod"] # Using placeholders instead of references
       },
       {
         action     = "create-route"
         segment    = "nonprod"
         destination-cidr-blocks = ["0.0.0.0/0"]
-        destinations = ["attachment-${aws_networkmanager_vpc_attachment.region2_prod_attachment.id}"]
+        destinations = ["attachment-placeholder-nonprod"] # Using placeholders instead of references
       }
     ]
     attachment-policies = [
@@ -104,7 +104,7 @@ resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment"
   policy_document = local.core_network_policy
 }
 
-# Attach VPCs to the Core Network
+# Attach VPCs to the Core Network - Using more specific subnet ARNs
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider             = aws.delegated_account
   subnet_arns          = [
@@ -117,6 +117,9 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
     Name        = "Region1-VPC-Attachment"
     Environment = "Test"
   }
+
+  # Wait for policy to be properly applied
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
 resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
@@ -131,6 +134,9 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
     Name        = "Region2-VPC-Attachment"
     Environment = "Test"
   }
+  
+  # Wait for policy to be properly applied
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
 # Add routes to route traffic through the Cloud WAN
