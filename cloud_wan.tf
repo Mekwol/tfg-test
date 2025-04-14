@@ -27,56 +27,53 @@ resource "aws_networkmanager_core_network" "core_network" {
 
 # Define a minimal valid Core Network Policy
 
-data "aws_networkmanager_core_network_policy_document" "core_network_policy" {
-  core_network_configuration {
-    asn_ranges = ["64512-65534"]
-    
-    edge_location {
-      location = "us-east-1"
-      asn      = 64512
+locals {
+  initial_core_network_policy = jsonencode({
+    version = "2021.12"
+    core-network-configuration = {
+      asn-ranges = ["64512-65534"]
+      edge-locations = [
+        {
+          location = "us-east-1"
+        },
+        {
+          location = "us-east-2"
+        }
+      ]
     }
-    
-    edge_location {
-      location = "us-east-2"
-      asn      = 64513
-    }
-  }
-  
-  segment {
-    name                        = "segment1"
-    description                 = "Segment for Test environment"
-    require_attachment_acceptance = false
-    
-    edge_location {
-      location = "us-east-1"
-    }
-    
-    edge_location {
-      location = "us-east-2"
-    }
-  }
-  
-  attachment_policy {
-    rule_number = 100
-    
-    condition {
-      type     = "tag-value"
-      key      = "Environment"
-      operator = "equals"
-      value    = "Test"
-    }
-    
-    action {
-      segment = "segment1"
-    }
-  }
+    segments = [
+      {
+        name = "segment1"
+        description = "Segment for Test environment"
+        require-attachment-acceptance = false
+        edge-locations = ["us-east-1", "us-east-2"]
+      }
+    ]
+    attachment-policies = [
+      {
+        rule-number = 100
+        action = {
+          segment = "segment1"
+        }
+        conditions = [
+          {
+            type = "tag-value",
+            key = "Environment",
+            value = "Test"
+          }
+        ]
+      }
+    ]
+  })
 }
+
 # Attach the minimal policy to the Core Network
+
 
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
-  policy_document = data.aws_networkmanager_core_network_policy_document.core_network_policy.json
+  policy_document = local.initial_core_network_policy
 }
 
 # Attach VPCs to the Core Network - Simplify to get basic functionality working
