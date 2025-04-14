@@ -28,28 +28,26 @@ resource "aws_networkmanager_core_network" "core_network" {
 # Define a minimal valid Core Network Policy with edges
 
 locals {
-  initial_core_network_policy = jsonencode({
+  core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
       asn-ranges     = ["64512-65534"]
       edge-locations = ["us-east-1", "us-east-2"]
       edges = [
         {
-          location            = "us-east-1"
-          asn                 = 64512
-          inside-cidr-blocks  = ["169.254.0.0/16"]
+          edge_location = "us-east-1"
+          asn      = 64512
         },
         {
-          location            = "us-east-2"
-          asn                 = 64513
-          inside-cidr-blocks  = ["169.254.0.0/16"]
+          edge_location = "us-east-2"
+          asn      = 64513
         }
       ]
     }
     segments = [
       {
-        name                           = "segment1"
-        description                    = "Segment One"
+        name                          = "segment1"
+        description                   = "Segment One"
         require-attachment-acceptance = false
       }
     ]
@@ -66,8 +64,9 @@ locals {
           }
         ]
         action = {
-          association-method = "constant"
+          association-method = "attachment"
           segment            = "segment1"
+          require-acceptance = false
         }
       }
     ]
