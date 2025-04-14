@@ -26,50 +26,42 @@ resource "aws_networkmanager_core_network" "core_network" {
 }
 
 # Define a minimal valid Core Network Policy
-
 locals {
   initial_core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
-      asn-ranges = ["64512-64515"]  # Using the narrower range from the example
-      edge-locations = [
-        {
-          location = "us-east-1"
-        },
-        {
-          location = "us-east-2"
-        }
-      ]
+      asn-ranges       = ["64512-65534"]
+      edge-locations   = ["us-east-1", "us-east-2"]
     }
     segments = [
       {
-        name = "SharedService"  # Using the segment name from the example
-        description = "SharedService"
-        edge-locations = ["us-east-1", "us-east-2"]
+        name                          = "segment1"
+        description                   = "Segment One"
+        require-attachment-acceptance = false
       }
     ]
     attachment-policies = [
       {
-        rule-number = 100
-        action = {
-          segment = "SharedService"
-        }
+        rule-number     = 100
+        condition-logic = "or"
         conditions = [
           {
-            type = "tag-value",
-            key = "Environment",
-            value = "Test"
+            type     = "tag-value"
+            operator = "equals"
+            key      = "Environment"
+            value    = "Test"
           }
         ]
+        action = {
+          association-method = "constant"
+          segment           = "segment1"
+        }
       }
     ]
   })
 }
 
-
 # Attach the minimal policy to the Core Network
-
-
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
