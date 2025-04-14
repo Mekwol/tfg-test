@@ -90,7 +90,7 @@ resource "aws_networkmanager_core_network" "core_network" {
   provider              = aws.delegated_account
   global_network_id     = aws_networkmanager_global_network.global_network.id
   description           = "TFG Core Network"
-  policy_document       = local.core_network_policy
+  policy_content       = local.core_network_policy
   
   tags = {
     Name        = "TFG-Core-Network"
