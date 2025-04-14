@@ -1,28 +1,28 @@
 variable "aws_regions" {
-  type    = list(string)
-  default = ["us-east-1", "us-east-2"]
+  description = "List of AWS regions to deploy resources"
+  type        = list(string)
+  default     = ["us-east-1", "us-east-2"]
 }
 
-# set in tfvars
-variable "aws_region" {}
+variable "aws_region" {
+  description = "Primary AWS region for deployment"
+  type        = string
+}
 
-# set in tfvars
-variable "root_ou_id" {}
+variable "root_ou_id" {
+  description = "AWS Organization Root OU ID"
+  type        = string
+}
 
+variable "my_ip" {
+  description = "Your public IP address for SSH access"
+  type        = string
+}
 
-# set in tfvars
-#variable "mgmt_acct" {}
-
-#myip
-#variable "my_ip" {}
-
-variable "linux_ip" {}
-
-#variable "org_id" {
-# description = "AWS Organization ID"
-#type        = string
-#}
-
+variable "linux_ip" {
+  description = "Linux bastion IP address for SSH access"
+  type        = string
+}
 
 variable "tfg_test_account1_id" {
   description = "AWS Account ID for tfg-test-account1"
