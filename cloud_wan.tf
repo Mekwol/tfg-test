@@ -25,24 +25,13 @@ resource "aws_networkmanager_core_network" "core_network" {
   }
 }
 
-# Define a minimal valid Core Network Policy with edges
-
+# Define a minimal valid Core Network Policy
 locals {
-  core_network_policy = jsonencode({
+  initial_core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
-      asn-ranges     = ["64512-65534"]
-      edge-locations = ["us-east-1", "us-east-2"]
-      edges = [
-        {
-          edge_location = "us-east-1"
-          asn      = 64512
-        },
-        {
-          edge_location = "us-east-2"
-          asn      = 64513
-        }
-      ]
+      asn-ranges       = ["64512-65534"]
+      edge-locations   = ["us-east-1", "us-east-2"]
     }
     segments = [
       {
@@ -64,24 +53,22 @@ locals {
           }
         ]
         action = {
-          association-method = "attachment"
-          segment            = "segment1"
-          require-acceptance = false
+          association-method = "constant"
+          segment           = "segment1"
         }
       }
     ]
   })
 }
 
-
-# Attach the policy to the Core Network
+# Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
   policy_document = local.initial_core_network_policy
 }
 
-# Attach VPCs to the Core Network
+# Attach VPCs to the Core Network - Simplify to get basic functionality working
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider        = aws.delegated_account
   subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
@@ -109,21 +96,3 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
   
   depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
-
-# Add routes to route traffic through the Cloud WAN
-resource "aws_route" "region1_private_to_cloudwan" {
-  provider               = aws.tfg-test-account1-region1
-  route_table_id         = aws_route_table.region1_private_rt.id
-  destination_cidr_block = aws_vpc.region2_vpc.cidr_block
-  core_network_arn       = aws_networkmanager_core_network.core_network.arn
-  depends_on             = [aws_networkmanager_vpc_attachment.region1_prod_attachment]
-}
-
-resource "aws_route" "region2_private_to_cloudwan" {
-  provider               = aws.tfg-test-account1-region2
-  route_table_id         = aws_route_table.region2_private_rt.id
-  destination_cidr_block = aws_vpc.region1_vpc.cidr_block
-  core_network_arn       = aws_networkmanager_core_network.core_network.arn
-  depends_on             = [aws_networkmanager_vpc_attachment.region2_prod_attachment]
-}
-
