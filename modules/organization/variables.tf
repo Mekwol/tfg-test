@@ -6,4 +6,10 @@ variable "aws_regions" {
 variable "tfg_test_account1_id" {
   description = "ID of the test account"
   type        = string
+
+}
+
+variable "root_ou_id" {
+  description = "The ID of the root organizational unit"
+  type        = string
 }
