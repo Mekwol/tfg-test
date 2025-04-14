@@ -77,13 +77,34 @@ resource "null_resource" "apply_core_network_policy" {
     command = <<EOT
       echo "Waiting for core network to become available..."
 
-      # Poll until the core network is available (up to 15 minutes)
-      for i in {1..30}; do
-        aws networkmanager get-core-network --core-network-id ${aws_networkmanager_core_network.core_network.id} && break || sleep 30
+      # Poll every 60 seconds for up to 15 minutes (900 seconds)
+      attempt=1
+      while [ $attempt -le 15 ]; do
+        echo "Attempt $attempt to check core network availability..."
+        aws networkmanager get-core-network --core-network-id ${aws_networkmanager_core_network.core_network.id}
+        
+        # If the Core Network is found, break the loop
+        if [ $? -eq 0 ]; then
+          echo "Core Network is available."
+          break
+        else
+          echo "Core Network not found. Retrying in 60 seconds..."
+          sleep 60
+          ((attempt++))
+        fi
       done
 
-      echo '${local.initial_core_network_policy}' > core_network_policy.json
+      if [ $attempt -gt 15 ]; then
+        echo "Core network still not available after 15 attempts. Exiting."
+        exit 1
+      fi
 
+      echo "Applying core network policy..."
+
+      # Save the policy to a temporary JSON file
+      echo '{"attachment-policies":[{"action":{"association-method":"constant","segment":"segment1"},"condition-logic":"or","conditions":[{"key":"Environment","operator":"equals","type":"tag-value","value":"Test"}],"rule-number":100}],"core-network-configuration":{"edges":[{"asn":64512,"location":"us-east-1"},{"asn":64513,"location":"us-east-2"}]},"segments":[{"description":"Segment One","name":"segment1","require-attachment-acceptance":false}],"version":"2021.12"}' > core_network_policy.json
+
+      # Apply the policy to the core network
       aws networkmanager put-core-network-policy \
         --core-network-id ${aws_networkmanager_core_network.core_network.id} \
         --policy-document file://core_network_policy.json
