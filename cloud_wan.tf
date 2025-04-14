@@ -13,9 +13,9 @@ resource "aws_networkmanager_global_network" "global_network" {
   }
 }
 
-# Define the Core Network Policy Document
+# Define the initial Core Network Policy Document (without segment-actions)
 locals {
-  core_network_policy = jsonencode({
+  initial_core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
       asn-ranges       = ["64512-65534"]
@@ -26,26 +26,12 @@ locals {
       {
         name                          = "prod"
         description                   = "Production Segment"
-        require-attachment-acceptance = true # Changed to true to ensure proper attachment process
+        require-attachment-acceptance = false
       },
       {
         name                          = "nonprod"
         description                   = "Non-Production Segment"
-        require-attachment-acceptance = true # Changed to true to ensure proper attachment process
-      }
-    ]
-    segment-actions = [
-      {
-        action     = "create-route"
-        segment    = "prod"
-        destination-cidr-blocks = ["0.0.0.0/0"]
-        destinations = ["attachment-placeholder-prod"] # Using placeholders instead of references
-      },
-      {
-        action     = "create-route"
-        segment    = "nonprod"
-        destination-cidr-blocks = ["0.0.0.0/0"]
-        destinations = ["attachment-placeholder-nonprod"] # Using placeholders instead of references
+        require-attachment-acceptance = false
       }
     ]
     attachment-policies = [
@@ -97,14 +83,14 @@ resource "aws_networkmanager_core_network" "core_network" {
   }
 }
 
-# Attach the policy to the Core Network
-resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
+# Attach the initial policy to the Core Network
+resource "aws_networkmanager_core_network_policy_attachment" "initial_policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
-  policy_document = local.core_network_policy
+  policy_document = local.initial_core_network_policy
 }
 
-# Attach VPCs to the Core Network - Using more specific subnet ARNs
+# Attach VPCs to the Core Network
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider             = aws.delegated_account
   subnet_arns          = [
@@ -117,9 +103,8 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
     Name        = "Region1-VPC-Attachment"
     Environment = "Test"
   }
-
-  # Wait for policy to be properly applied
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+  
+  depends_on = [aws_networkmanager_core_network_policy_attachment.initial_policy_attachment]
 }
 
 resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
@@ -135,8 +120,7 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
     Environment = "Test"
   }
   
-  # Wait for policy to be properly applied
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+  depends_on = [aws_networkmanager_core_network_policy_attachment.initial_policy_attachment]
 }
 
 # Add routes to route traffic through the Cloud WAN
