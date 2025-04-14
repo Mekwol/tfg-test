@@ -73,7 +73,11 @@ locals {
 resource "null_resource" "apply_core_network_policy" {
   provisioner "local-exec" {
     command = <<EOT
-      aws networkmanager put-core-network-policy \
+      
+     echo "Waiting for core network to be fully available..."
+      sleep 60
+
+    aws networkmanager put-core-network-policy \
         --core-network-id ${aws_networkmanager_core_network.core_network.id} \
         --policy-document '${local.initial_core_network_policy}'
     EOT
