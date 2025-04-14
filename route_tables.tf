@@ -113,22 +113,3 @@ resource "aws_route_table_association" "region2_private_rta1" {
 }
 
 
-
-#AWS Cloud WAN cross-region routes 
-
-resource "aws_route" "region1_private_to_cloudwan" {
-  provider               = aws.tfg-test-account1-region1
-  route_table_id         = aws_route_table.region1_private_rt.id
-  destination_cidr_block = aws_vpc.region2_vpc.cidr_block
-  core_network_arn       = aws_networkmanager_core_network.core_network.arn
-  depends_on             = [aws_networkmanager_vpc_attachment.region1_prod_attachment]
-}
-
-resource "aws_route" "region2_private_to_cloudwan" {
-  provider               = aws.tfg-test-account1-region2
-  route_table_id         = aws_route_table.region2_private_rt.id
-  destination_cidr_block = aws_vpc.region1_vpc.cidr_block
-  core_network_arn       = aws_networkmanager_core_network.core_network.arn
-  depends_on             = [aws_networkmanager_vpc_attachment.region2_prod_attachment]
-}
-
