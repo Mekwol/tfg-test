@@ -32,40 +32,48 @@ locals {
     version = "2021.12"
     core-network-configuration = {
       asn-ranges = ["64512-65534"]
+      vpn-ecmp-support = true
       edge-locations = [
         {
           location = "us-east-1"
+          asn = 64512
         },
         {
           location = "us-east-2"
+          asn = 64513
         }
       ]
     }
     segments = [
       {
         name = "segment1"
+        description = "Segment for Test environment"
+        require-attachment-acceptance = false
         edge-locations = ["us-east-1", "us-east-2"]
+        isolate-attachments = false
       }
     ]
     segment-actions = []
     attachment-policies = [
       {
         rule-number = 100
+        action = {
+          association-method = "tag"
+          segment = "segment1"
+          tag-value-of-key = "Environment"
+        }
         conditions = [
           {
-            type = "tag-value"
+            type = "tag-exists"
             key = "Environment"
             value = "Test"
+            operator = "equals"
           }
         ]
-        action = {
-          segment = "segment1"
-        }
       }
     ]
   })
 }
-
 # Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
  provider        = aws.delegated_account
