@@ -31,7 +31,7 @@ locals {
   initial_core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
-      asn-ranges = ["64512-65534"]
+      asn-ranges = ["64512-64515"]  # Using the narrower range from the example
       edge-locations = [
         {
           location = "us-east-1"
@@ -43,9 +43,8 @@ locals {
     }
     segments = [
       {
-        name = "segment1"
-        description = "Segment for Test environment"
-        require-attachment-acceptance = false
+        name = "SharedService"  # Using the segment name from the example
+        description = "SharedService"
         edge-locations = ["us-east-1", "us-east-2"]
       }
     ]
@@ -53,7 +52,7 @@ locals {
       {
         rule-number = 100
         action = {
-          segment = "segment1"
+          segment = "SharedService"
         }
         conditions = [
           {
@@ -66,6 +65,7 @@ locals {
     ]
   })
 }
+
 
 # Attach the minimal policy to the Core Network
 
