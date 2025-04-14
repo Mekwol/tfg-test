@@ -53,21 +53,19 @@ locals {
         isolate-attachments = false
       }
     ]
-    segment-actions = []
+    segment-actions = [],
     attachment-policies = [
       {
-        rule-number = 100
+        rule-number = 100,
         action = {
-          association-method = "tag"
+          association-method = "tag",
           segment = "segment1"
-          tag-value-of-key = "Environment"
-        }
+        },
         conditions = [
           {
-            type = "tag-exists"
-            key = "Environment"
+            type = "tag-value",
+            key = "Environment",
             value = "Test"
-            operator = "equals"
           }
         ]
       }
