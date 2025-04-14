@@ -5,12 +5,12 @@ resource "aws_vpc_ipam" "main_ipam" {
   provider    = aws.delegated_account
   description = "Global IPAM for managing CIDR blocks"
 
- operating_regions {
-    region_name = var.aws_regions[0]
+  operating_regions {
+    region_name = "us-east-1"
   }
 
   operating_regions {
-    region_name = var.aws_regions[1]
+    region_name = "us-east-2"
   }
 }
 # --------------------------
