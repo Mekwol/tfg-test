@@ -26,40 +26,50 @@ resource "aws_networkmanager_core_network" "core_network" {
 }
 
 # Define a minimal valid Core Network Policy
+
 locals {
   initial_core_network_policy = jsonencode({
-    version = "2021.12"
+    version = "2021.12",
     core-network-configuration = {
-      asn-ranges       = ["64512-65534"]
-      edge-locations   = ["us-east-1", "us-east-2"]
-    }
+      edges = [
+        {
+          location = "us-east-1"
+          asn      = 64512
+        },
+        {
+          location = "us-east-2"
+          asn      = 64513
+        }
+      ]
+    },
     segments = [
       {
         name                          = "segment1"
         description                   = "Segment One"
         require-attachment-acceptance = false
       }
-    ]
+    ],
     attachment-policies = [
       {
-        rule-number     = 100
-        condition-logic = "or"
+        rule-number     = 100,
+        condition-logic = "or",
         conditions = [
           {
-            type     = "tag-value"
-            operator = "equals"
-            key      = "Environment"
+            type     = "tag-value",
+            operator = "equals",
+            key      = "Environment",
             value    = "Test"
           }
-        ]
+        ],
         action = {
-          association-method = "constant"
-          segment           = "segment1"
+          association-method = "constant",
+          segment            = "segment1"
         }
       }
     ]
   })
 }
+
 
 # Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
