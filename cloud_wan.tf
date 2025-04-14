@@ -33,19 +33,19 @@ locals {
     core-network-configuration = {
       edges = [
         {
+          asn      = 64512,
           location = "us-east-1"
-          asn      = 64512
         },
         {
+          asn      = 64513,
           location = "us-east-2"
-          asn      = 64513
         }
       ]
     },
     segments = [
       {
-        name                          = "segment1"
-        description                   = "Segment One"
+        name                          = "segment1",
+        description                   = "Segment One",
         require-attachment-acceptance = false
       }
     ],
