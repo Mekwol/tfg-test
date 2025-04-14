@@ -18,7 +18,7 @@ resource "aws_networkmanager_core_network" "core_network" {
   provider          = aws.delegated_account
   global_network_id = aws_networkmanager_global_network.global_network.id
   description       = "TFG Core Network"
-  policy_document   = local.initial_core_network_policy  
+  
   tags = {
     Name        = "TFG-Core-Network"
     Environment = "Test"
@@ -26,7 +26,6 @@ resource "aws_networkmanager_core_network" "core_network" {
 }
 
 # Define a minimal valid Core Network Policy
-
 locals {
   initial_core_network_policy = jsonencode({
     version = "2021.12",
@@ -70,15 +69,28 @@ locals {
   })
 }
 
+# Apply Core Network Policy via CLI after Core Network creation
+resource "null_resource" "apply_core_network_policy" {
+  provisioner "local-exec" {
+    command = <<EOT
+      aws networkmanager put-core-network-policy \
+        --core-network-id ${aws_networkmanager_core_network.core_network.id} \
+        --policy-document '${local.initial_core_network_policy}'
+    EOT
 
-# Attach the minimal policy to the Core Network
-#resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
- # provider        = aws.delegated_account
-  #core_network_id = aws_networkmanager_core_network.core_network.id
-  #policy_document = local.initial_core_network_policy
-#}
+    environment = {
+      AWS_REGION = "us-east-1" # Replace if needed
+    }
+  }
 
-# Attach VPCs to the Core Network - Simplify to get basic functionality working
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  depends_on = [aws_networkmanager_core_network.core_network]
+}
+
+# Attach VPCs to the Core Network
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider        = aws.delegated_account
   subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
@@ -89,8 +101,8 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
     Name        = "Region1-VPC-Attachment"
     Environment = "Test"
   }
-  
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+
+  depends_on = [null_resource.apply_core_network_policy]
 }
 
 resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
@@ -103,6 +115,7 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
     Name        = "Region2-VPC-Attachment"
     Environment = "Test"
   }
-  
- # depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+
+  depends_on = [null_resource.apply_core_network_policy]
 }
+
