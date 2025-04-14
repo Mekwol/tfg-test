@@ -94,7 +94,7 @@ resource "aws_ram_resource_association" "ipam_region2_nonprod_subnet2_associatio
 # Share with the newly created account
 resource "aws_ram_principal_association" "ipam_account_principal" {
   provider           = aws.delegated_account
-  principal          = aws_organizations_account.tfg-test-account1.id
+  principal          = var.tfg-test-account1.id
   resource_share_arn = aws_ram_resource_share.ipam_share.arn
   depends_on         = [time_sleep.wait_for_account_ready]
 }
