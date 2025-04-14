@@ -97,4 +97,36 @@ resource "aws_networkmanager_core_network_policy_document" "policy" {
 # Attach the policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
-  core_network_id = aws_netwo
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  policy_document = aws_networkmanager_core_network_policy_document.policy.json
+}
+
+# Attach VPCs to the Core Network
+resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
+  provider             = aws.delegated_account
+  subnet_arns          = [
+    aws_subnet.region1_private_subnet1.arn
+  ]
+  core_network_id      = aws_networkmanager_core_network.core_network.id
+  vpc_arn              = aws_vpc.region1_vpc.arn
+  
+  tags = {
+    Name        = "Region1-VPC-Attachment"
+    Environment = "Test"
+  }
+}
+
+resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
+  provider             = aws.delegated_account
+  subnet_arns          = [
+    aws_subnet.region2_private_subnet1.arn
+  ]
+  core_network_id      = aws_networkmanager_core_network.core_network.id
+  vpc_arn              = aws_vpc.region2_vpc.arn
+  
+  tags = {
+    Name        = "Region2-VPC-Attachment"
+    Environment = "Test"
+  }
+}
+
