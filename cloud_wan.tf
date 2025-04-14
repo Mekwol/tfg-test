@@ -18,7 +18,7 @@ resource "aws_networkmanager_core_network" "core_network" {
   provider          = aws.delegated_account
   global_network_id = aws_networkmanager_global_network.global_network.id
   description       = "TFG Core Network"
-  
+  policy_document   = local.initial_core_network_policy  
   tags = {
     Name        = "TFG-Core-Network"
     Environment = "Test"
@@ -72,11 +72,11 @@ locals {
 
 
 # Attach the minimal policy to the Core Network
-resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
-  provider        = aws.delegated_account
-  core_network_id = aws_networkmanager_core_network.core_network.id
-  policy_document = local.initial_core_network_policy
-}
+#resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
+ # provider        = aws.delegated_account
+  #core_network_id = aws_networkmanager_core_network.core_network.id
+  #policy_document = local.initial_core_network_policy
+#}
 
 # Attach VPCs to the Core Network - Simplify to get basic functionality working
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
