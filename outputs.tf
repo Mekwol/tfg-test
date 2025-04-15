@@ -16,22 +16,22 @@ variable "my_ip" {
 
 
 # Cloud WAN Outputs
-output "global_network_id" {
-  description = "ID of the AWS Cloud WAN Global Network"
-  value       = aws_networkmanager_global_network.global_network.id
-}
+#output "global_network_id" {
+ # description = "ID of the AWS Cloud WAN Global Network"
+  #value       = aws_networkmanager_global_network.global_network.id
+#}
 
-output "core_network_id" {
-  description = "ID of the AWS Cloud WAN Core Network"
-  value       = aws_networkmanager_core_network.core_network.id
-}
+#output "core_network_id" {
+ # description = "ID of the AWS Cloud WAN Core Network"
+  #value       = aws_networkmanager_core_network.core_network.id
+#}
 
-output "region1_vpc_attachment_id" {
-  description = "ID of the VPC attachment for Region 1"
-  value       = aws_networkmanager_vpc_attachment.region1_prod_attachment.id
-}
+#output "region1_vpc_attachment_id" {
+ # description = "ID of the VPC attachment for Region 1"
+  #value       = aws_networkmanager_vpc_attachment.region1_prod_attachment.id
+#}
 
-output "region2_vpc_attachment_id" {
-  description = "ID of the VPC attachment for Region 2"
-  value       = aws_networkmanager_vpc_attachment.region2_prod_attachment.id
-}
+#output "region2_vpc_attachment_id" {
+ # description = "ID of the VPC attachment for Region 2"
+  #value       = aws_networkmanager_vpc_attachment.region2_prod_attachment.id
+#}
