@@ -18,7 +18,6 @@ resource "aws_networkmanager_core_network" "core_network" {
   provider          = aws.delegated_account
   global_network_id = aws_networkmanager_global_network.global_network.id
   description       = "TFG Core Network"
- policy_document   = local.initial_core_network_policy
   
   tags = {
     Name        = "TFG-Core-Network"
@@ -52,23 +51,9 @@ locals {
         "name": "prod",
         "require-attachment-acceptance": false
       },
-      {
+     {
         "name": "non-prod",
         "require-attachment-acceptance": false
-      }
-    ],
-    "segment-actions": [
-      {
-        "action": "share",
-        "mode": "attachment-route",
-        "segment": "prod",
-        "share-with": ["non-prod"]
-      },
-      {
-        "action": "share",
-        "mode": "attachment-route",
-        "segment": "non-prod",
-        "share-with": ["prod"]
       }
     ],
     "network-function-groups": []
@@ -76,6 +61,12 @@ locals {
 }
 
 
+# Attach the minimal policy to the Core Network
+resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
+  provider        = aws.delegated_account
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  policy_document = local.initial_core_network_policy
+}
 
 # Attach VPCs to the Core Network 
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
@@ -89,6 +80,7 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
     Environment = "Test"
   }
   
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
 resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
@@ -102,4 +94,5 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
     Environment = "Test"
   }
   
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
