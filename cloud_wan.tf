@@ -68,7 +68,7 @@ resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment"
   policy_document = local.initial_core_network_policy
 }
 
-# Attach VPCs to the Core Network - Simplify to get basic functionality working
+# Attach VPCs to the Core Network 
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider        = aws.delegated_account
   subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
