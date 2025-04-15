@@ -105,8 +105,9 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
     Name        = "Region1-VPC-Attachment"
     Environment = "Test"
   }
+  depends_on = [aws_networkmanager_core_network_policy.policy]
+
   
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
 resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
@@ -120,5 +121,6 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
     Environment = "Test"
   }
   
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+  depends_on = [aws_networkmanager_core_network_policy.policy]
+
 }
