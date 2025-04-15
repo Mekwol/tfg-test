@@ -134,7 +134,7 @@ resource "aws_subnet" "delegated_public_subnet2_region2" {
 
 # Create private subnet in us-east-2 VPC
 resource "aws_subnet" "delegated_private_subnet1_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
   vpc_id   = aws_vpc.delegated_vpc_region2.id
 
   cidr_block        = cidrsubnet(aws_vpc.delegated_vpc_region2.cidr_block, 2, 2) # /23 subnet
@@ -249,8 +249,8 @@ resource "aws_route_table_association" "delegated_private_rta1_region1" {
 
 # Internet Gateway for Region 2
 resource "aws_internet_gateway" "delegated_igw_region2" {
-  provider = aws.delegated_account
-  vpc_id   = aws_vpc.delegated_vpc_region2.id
+ provider = aws.delegated_account-region2  
+vpc_id   = aws_vpc.delegated_vpc_region2.id
 
   tags = {
     Name        = "Delegated-Account-IGW-Region2"
@@ -260,7 +260,7 @@ resource "aws_internet_gateway" "delegated_igw_region2" {
 
 # Elastic IP for NAT Gateway in Region 2
 resource "aws_eip" "delegated_nat_eip_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
   domain   = "vpc"
 
   tags = {
@@ -271,7 +271,7 @@ resource "aws_eip" "delegated_nat_eip_region2" {
 
 # NAT Gateway for Region 2 - place in public subnet 1
 resource "aws_nat_gateway" "delegated_nat_region2" {
-  provider      = aws.delegated_account
+  provider      = aws.delegated_account-region2
   allocation_id = aws_eip.delegated_nat_eip_region2.id
   subnet_id     = aws_subnet.delegated_public_subnet1_region2.id
 
@@ -285,7 +285,7 @@ resource "aws_nat_gateway" "delegated_nat_region2" {
 
 # Public Route Table for Region 2
 resource "aws_route_table" "delegated_public_rt_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
   vpc_id   = aws_vpc.delegated_vpc_region2.id
 
   route {
@@ -301,7 +301,7 @@ resource "aws_route_table" "delegated_public_rt_region2" {
 
 # Private Route Table for Region 2
 resource "aws_route_table" "delegated_private_rt_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
   vpc_id   = aws_vpc.delegated_vpc_region2.id
 
   route {
@@ -317,20 +317,20 @@ resource "aws_route_table" "delegated_private_rt_region2" {
 
 # Public Subnet Associations for Region 2
 resource "aws_route_table_association" "delegated_public_rta1_region2" {
-  provider       = aws.delegated_account
+  provider       = aws.delegated_account-region2
   subnet_id      = aws_subnet.delegated_public_subnet1_region2.id
   route_table_id = aws_route_table.delegated_public_rt_region2.id
 }
 
 resource "aws_route_table_association" "delegated_public_rta2_region2" {
-  provider       = aws.delegated_account
+  provider       = aws.delegated_account-region2
   subnet_id      = aws_subnet.delegated_public_subnet2_region2.id
   route_table_id = aws_route_table.delegated_public_rt_region2.id
 }
 
 # Private Subnet Association for Region 2
 resource "aws_route_table_association" "delegated_private_rta1_region2" {
-  provider       = aws.delegated_account
+  provider       = aws.delegated_account-region2
   subnet_id      = aws_subnet.delegated_private_subnet1_region2.id
   route_table_id = aws_route_table.delegated_private_rt_region2.id
 }
