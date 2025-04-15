@@ -47,13 +47,14 @@ locals {
     segments = [
       {
         name = "prod",
-        "require-attachment-acceptance" = false
+        "require-attachment-acceptance" = false,
+        "isolation-enabled" = false
       }
     ],
     "segment-actions" = [
       {
         segment = "prod",
-        action = "create-route-table"
+        action = "create-route"
       }
     ],
     "attachment-policies" = [
@@ -62,14 +63,13 @@ locals {
         "condition-logic" = "or",
         conditions = [
           {
-            "type" = "tag-value",
-            "operator" = "equals",
-            "key" = "Environment",
-            "value" = "Test"
+            "type" = "tag-exists",
+            "key" = "Environment"
           }
         ],
         action = {
           "association-method" = "tag",
+          "tag-value-of-key" = "Environment",
           "segment" = "prod"
         }
       }
@@ -77,14 +77,11 @@ locals {
     "route-tables" = [
       {
         name = "prod-rt",
-        segment = "prod",
-        "is-default" = true
+        segment = "prod"
       }
-    ],
-    "network-function-groups" = []
+    ]
   })
-}
-# Attach the minimal policy to the Core Network
+}# Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
