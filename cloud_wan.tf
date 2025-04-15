@@ -55,7 +55,7 @@ locals {
         action = "create-route",
         segment = "prod",
         "destination-cidr-blocks" = ["0.0.0.0/0"],
-        "destinations" = ["blackhole"]  // Adding a destination
+        "destinations" = ["blackhole"] 
       }
     ],
     "attachment-policies" = [
@@ -118,31 +118,3 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
 
 
 
-# Attach VPCs to the Core Network 
-resource "aws_networkmanager_vpc_attachment" "acct2-region1_prod_attachment" {
-  provider = aws.tfg-test-account1-region1
-  subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
-  core_network_id = aws_networkmanager_core_network.core_network.id
-  vpc_arn         = aws_vpc.region1_vpc.arn
-  
-  tags = {
-    Name        = "Region1-VPC-Attachment"
-    Environment = "Test"
-  }
-  
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
-}
-
-resource "aws_networkmanager_vpc_attachment" "acct2-region2_prod_attachment" {
-   provider = aws.tfg-test-account1-region2
-  subnet_arns     = [aws_subnet.region2_private_subnet1.arn]
-  core_network_id = aws_networkmanager_core_network.core_network.id
-  vpc_arn         = aws_vpc.region2_vpc.arn
-  
-  tags = {
-    Name        = "Region2-VPC-Attachment"
-    Environment = "Test"
-  }
-  
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
-}
