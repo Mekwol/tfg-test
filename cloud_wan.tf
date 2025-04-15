@@ -27,7 +27,6 @@ resource "aws_networkmanager_core_network" "core_network" {
 
 # Define a minimal valid Core Network Policy
 
-
 locals {
   initial_core_network_policy = jsonencode({
     "version": "2021.12",
