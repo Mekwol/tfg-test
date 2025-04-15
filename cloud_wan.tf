@@ -5,7 +5,6 @@
 # Create the AWS Cloud WAN Global Network
 resource "aws_networkmanager_global_network" "global_network" {
   provider    = aws.delegated_account
-  policy_document   = local.initial_core_network_policy
   description = "TFG Global Network"
   
   tags = {
@@ -19,6 +18,7 @@ resource "aws_networkmanager_core_network" "core_network" {
   provider          = aws.delegated_account
   global_network_id = aws_networkmanager_global_network.global_network.id
   description       = "TFG Core Network"
+ policy_document   = local.initial_core_network_policy
   
   tags = {
     Name        = "TFG-Core-Network"
