@@ -52,8 +52,10 @@ locals {
     ],
     "segment-actions" = [
       {
+        action = "create-route",
         segment = "prod",
-        action = "create-route"
+        "destination-cidr-blocks" = ["0.0.0.0/0"],
+        "destinations" = []
       }
     ],
     "attachment-policies" = [
@@ -64,19 +66,19 @@ locals {
           {
             "type" = "tag-value",
             "key" = "Environment",
+            "operator" = "equals",
             "value" = "Test"
           }
         ],
         action = {
           "association-method" = "tag",
-          "segment" = "prod"
+          "tag-value-of-key" = "Environment"
         }
       }
     ],
     "network-function-groups" = []
   })
-}
-# Attach the minimal policy to the Core Network
+}# Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
   core_network_id = aws_networkmanager_core_network.core_network.id
