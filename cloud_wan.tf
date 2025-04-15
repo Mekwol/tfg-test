@@ -32,7 +32,7 @@ locals {
     version = "2021.12",
     "core-network-configuration" = {
       "vpn-ecmp-support" = true,
-      "asn-ranges" = ["64512-65534"],
+      "asn-ranges" = ["64512-64520"],
       "edge-locations" = [
         {
           location = "us-east-1",
@@ -48,30 +48,19 @@ locals {
       {
         name = "prod",
         "require-attachment-acceptance" = false
-      },
-      {
-        name = "non-prod",
-        "require-attachment-acceptance" = false
       }
     ],
     "segment-actions" = [
       {
         segment = "prod",
         action = "create-route-table"
-      },
-      {
-        segment = "non-prod",
-        action = "create-route-table"
       }
     ],
     "route-tables" = [
       {
         name = "prod-rt",
-        segment = "prod"
-      },
-      {
-        name = "non-prod-rt",
-        segment = "non-prod"
+        segment = "prod",
+        "is-default" = true
       }
     ],
     "network-function-groups" = []
