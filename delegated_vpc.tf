@@ -343,30 +343,30 @@ resource "aws_route_table_association" "delegated_private_rta1_region2" {
 # ----------------------------------
 
 # Attach Delegated Account VPCs to the Core Network
-resource "aws_networkmanager_vpc_attachment" "delegated_region1_attachment" {
-  provider        = aws.delegated_account
-  subnet_arns     = [aws_subnet.delegated_private_subnet1_region1.arn]
-  core_network_id = aws_networkmanager_core_network.core_network.id
-  vpc_arn         = aws_vpc.delegated_vpc_region1.arn
+#resource "aws_networkmanager_vpc_attachment" "delegated_region1_attachment" {
+ # provider        = aws.delegated_account
+ # subnet_arns     = [aws_subnet.delegated_private_subnet1_region1.arn]
+  #core_network_id = aws_networkmanager_core_network.core_network.id
+ # vpc_arn         = aws_vpc.delegated_vpc_region1.arn
 
-  tags = {
-    Name        = "Delegated-Region1-VPC-Attachment"
-    Environment = "Test"
-  }
+  #tags = {
+   # Name        = "Delegated-Region1-VPC-Attachment"
+   # Environment = "Test"
+ # }
 
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
-}
+  #depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+#}
 
-resource "aws_networkmanager_vpc_attachment" "delegated_region2_attachment" {
-  provider        = aws.delegated_account
-  subnet_arns     = [aws_subnet.delegated_private_subnet1_region2.arn]
-  core_network_id = aws_networkmanager_core_network.core_network.id
-  vpc_arn         = aws_vpc.delegated_vpc_region2.arn
+#resource "aws_networkmanager_vpc_attachment" "delegated_region2_attachment" {
+ # provider        = aws.delegated_account
+  #subnet_arns     = [aws_subnet.delegated_private_subnet1_region2.arn]
+  #core_network_id = aws_networkmanager_core_network.core_network.id
+  #vpc_arn         = aws_vpc.delegated_vpc_region2.arn
 
-  tags = {
-    Name        = "Delegated-Region2-VPC-Attachment"
-    Environment = "Test"
-  }
+  #tags = {
+   # Name        = "Delegated-Region2-VPC-Attachment"
+    #Environment = "Test"
+  #}
 
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
-}
+  #depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+#}
