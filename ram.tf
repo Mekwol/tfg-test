@@ -1,93 +1,72 @@
+# Define locals for organization and clarity
+locals {
+  ipam_pools = {
+    # Region 1 pools
+    region1 = {
+      arn = aws_vpc_ipam_pool.region1.arn
+    }
+    region1_prod = {
+      arn = aws_vpc_ipam_pool.region1_prod.arn
+    }
+    region1_nonprod = {
+      arn = aws_vpc_ipam_pool.region1_nonprod.arn
+    }
+    region1_prod_subnet1 = {
+      arn = aws_vpc_ipam_pool.region1_prod_subnet1.arn
+    }
+    region1_prod_subnet2 = {
+      arn = aws_vpc_ipam_pool.region1_prod_subnet2.arn
+    }
+    region1_nonprod_subnet1 = {
+      arn = aws_vpc_ipam_pool.region1_nonprod_subnet1.arn
+    }
+    region1_nonprod_subnet2 = {
+      arn = aws_vpc_ipam_pool.region1_nonprod_subnet2.arn
+    }
+    
+    # Region 2 pools
+    region2 = {
+      arn = aws_vpc_ipam_pool.region2.arn
+    }
+    region2_prod = {
+      arn = aws_vpc_ipam_pool.region2_prod.arn
+    }
+    region2_nonprod = {
+      arn = aws_vpc_ipam_pool.region2_nonprod.arn
+    }
+    region2_prod_subnet1 = {
+      arn = aws_vpc_ipam_pool.region2_prod_subnet1.arn
+    }
+    region2_prod_subnet2 = {
+      arn = aws_vpc_ipam_pool.region2_prod_subnet2.arn
+    }
+    region2_nonprod_subnet1 = {
+      arn = aws_vpc_ipam_pool.region2_nonprod_subnet1.arn
+    }
+    region2_nonprod_subnet2 = {
+      arn = aws_vpc_ipam_pool.region2_nonprod_subnet2.arn
+    }
+  }
+}
+
 # Share IPAM with the new account
 resource "aws_ram_resource_share" "ipam_share" {
   provider                  = aws.delegated_account
   name                      = "ipam-resource-share"
   allow_external_principals = false
+  
+  tags = {
+    Name        = "ipam-resource-share"
+    Environment = "shared"
+    ManagedBy   = "terraform"
+  }
 }
 
-# Share Region 1 IPAM pools
-resource "aws_ram_resource_association" "ipam_region1_pool_association" {
+# Associate all IPAM pools using for_each
+resource "aws_ram_resource_association" "ipam_pool_associations" {
+  for_each           = local.ipam_pools
   provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region1_prod_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1_prod.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region1_nonprod_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1_nonprod.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region1_prod_subnet1_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1_prod_subnet1.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region1_prod_subnet2_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1_prod_subnet2.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region1_nonprod_subnet1_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1_nonprod_subnet1.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region1_nonprod_subnet2_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region1_nonprod_subnet2.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-# Share Region 2 IPAM pools
-resource "aws_ram_resource_association" "ipam_region2_pool_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region2_prod_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2_prod.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region2_nonprod_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2_nonprod.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region2_prod_subnet1_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2_prod_subnet1.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region2_prod_subnet2_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2_prod_subnet2.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region2_nonprod_subnet1_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2_nonprod_subnet1.arn
-  resource_share_arn = aws_ram_resource_share.ipam_share.arn
-}
-
-resource "aws_ram_resource_association" "ipam_region2_nonprod_subnet2_association" {
-  provider           = aws.delegated_account
-  resource_arn       = aws_vpc_ipam_pool.region2_nonprod_subnet2.arn
+  resource_arn       = each.value.arn
   resource_share_arn = aws_ram_resource_share.ipam_share.arn
 }
 
