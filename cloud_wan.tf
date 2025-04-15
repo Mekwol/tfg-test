@@ -32,7 +32,7 @@ locals {
     version = "2021.12",
     "core-network-configuration" = {
       "vpn-ecmp-support" = true,
-      "asn-ranges" = ["64512-64520"],
+      "asn-ranges" = ["64512-64553"],
       "edge-locations" = [
         {
           location = "us-east-1",
@@ -60,26 +60,26 @@ locals {
     "attachment-policies" = [
       {
         "rule-number" = 100,
-        "condition-logic" = "or",
-        conditions = [
+         conditions = [
           {
-            "type" = "tag-exists",
-            "key" = "Environment"
+            "type" = "tag-value",
+            "key" = "Environment", 
+            "value" = "prod", 
+	"operator": "equals"
           }
         ],
         action = {
-          "association-method" = "tag",
-          "tag-value-of-key" = "Environment",
+          "association-method" = "constant",
           "segment" = "prod"
         }
       }
-    ],
-    "route-tables" = [
-      {
-        name = "prod-rt",
-        segment = "prod"
-      }
     ]
+    #"route-tables" = [
+     # {
+      #  name = "prod-rt",
+       # segment = "prod"
+      #}
+    #]
   })
 }# Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
