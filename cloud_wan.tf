@@ -41,30 +41,21 @@ locals {
           location = "us-east-2"
         }
       ]
-      vpn-ecmp-support = true
+      vpn-ecmp-support = false
     }
     segments = [
       {
         name = "segment1"
         description = "Segment One"
         require-attachment-acceptance = false
-        isolate-attachments = false
-        edge-locations = ["us-east-1", "us-east-2"]
       }
     ]
     segment-actions = []
     attachment-policies = [
       {
         rule-number = 100
-        condition-logic = "or"
-        conditions = [
-          {
-            type = "tag-value"
-            operator = "equals"
-            key = "Environment"
-            value = "Test"
-          }
-        ]
+        condition-logic = "and"
+        conditions = []
         action = {
           association-method = "constant"
           segment = "segment1"
@@ -73,7 +64,6 @@ locals {
     ]
   })
 }
-
 
 # Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
