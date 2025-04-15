@@ -51,9 +51,23 @@ locals {
         "name": "prod",
         "require-attachment-acceptance": false
       },
-     {
+      {
         "name": "non-prod",
         "require-attachment-acceptance": false
+      }
+    ],
+    "segment-actions": [
+      {
+        "action": "share",
+        "mode": "attachment-route",
+        "segment": "prod",
+        "share-with": ["non-prod"]
+      },
+      {
+        "action": "share",
+        "mode": "attachment-route",
+        "segment": "non-prod",
+        "share-with": ["prod"]
       }
     ],
     "network-function-groups": []
