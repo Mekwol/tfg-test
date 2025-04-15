@@ -32,40 +32,47 @@ locals {
   initial_core_network_policy = jsonencode({
     version = "2021.12"
     core-network-configuration = {
-      asn-ranges       = ["64512-65534"]
-      edge-locations   = ["us-east-1", "us-east-2"]
+      asn-ranges = ["64512-65534"]
+      edge-locations = [
+        {
+          location = "us-east-1"
+        },
+        {
+          location = "us-east-2"
+        }
+      ]
       vpn-ecmp-support = true
     }
     segments = [
       {
-        name                          = "segment1"
-        description                   = "Segment One"
+        name = "segment1"
+        description = "Segment One"
         require-attachment-acceptance = false
-        edge-locations                = ["us-east-1", "us-east-2"]
+        isolate-attachments = false
+        edge-locations = ["us-east-1", "us-east-2"]
       }
     ]
     segment-actions = []
     attachment-policies = [
       {
-        rule-number     = 100
+        rule-number = 100
         condition-logic = "or"
         conditions = [
           {
-            type     = "tag-value"
+            type = "tag-value"
             operator = "equals"
-            key      = "Environment"
-            value    = "Test"
+            key = "Environment"
+            value = "Test"
           }
         ]
         action = {
           association-method = "constant"
-          segment           = "segment1"
+          segment = "segment1"
         }
       }
     ]
   })
 }
-
 
 
 # Attach the minimal policy to the Core Network
