@@ -62,11 +62,11 @@ locals {
 
 
 # Attach the minimal policy to the Core Network
-#resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
- # provider        = aws.delegated_account
-  #core_network_id = aws_networkmanager_core_network.core_network.id
-  #policy_document = local.initial_core_network_policy
-#}
+resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
+  provider        = aws.delegated_account
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  policy_document = local.initial_core_network_policy
+}
 
 # Attach VPCs to the Core Network - Simplify to get basic functionality working
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
@@ -80,7 +80,7 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
     Environment = "Test"
   }
   
- # depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
 resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
@@ -94,5 +94,5 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
     Environment = "Test"
   }
   
- # depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
