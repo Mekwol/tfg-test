@@ -53,20 +53,29 @@ locals {
     "segment-actions" = [
       {
         segment = "prod",
-        action = "create-route-table"
+        action = "create-route"
       }
     ],
-    "route-tables" = [
+    "attachment-policies" = [
       {
-        name = "prod-rt",
-        segment = "prod",
-        "is-default" = true
+        "rule-number" = 100,
+        "condition-logic" = "or",
+        "conditions" = [
+          {
+            "type" = "tag-value",
+            "key" = "Environment",
+            "value" = "Test"
+          }
+        ],
+        action = {
+          "association-method" = "tag",
+          "segment" = "prod"
+        }
       }
     ],
     "network-function-groups" = []
   })
 }
-
 # Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
   provider        = aws.delegated_account
