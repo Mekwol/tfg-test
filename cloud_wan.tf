@@ -119,7 +119,7 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
 
 
 # Attach VPCs to the Core Network 
-resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
+resource "aws_networkmanager_vpc_attachment" "acct2-region1_prod_attachment" {
   provider = aws.tfg-test-account1-region1
   subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
   core_network_id = aws_networkmanager_core_network.core_network.id
@@ -133,7 +133,7 @@ resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
-resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
+resource "aws_networkmanager_vpc_attachment" "acct2-region2_prod_attachment" {
    provider = aws.tfg-test-account1-region2
   subnet_arns     = [aws_subnet.region2_private_subnet1.arn]
   core_network_id = aws_networkmanager_core_network.core_network.id
