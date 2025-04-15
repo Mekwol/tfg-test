@@ -29,37 +29,54 @@ resource "aws_networkmanager_core_network" "core_network" {
 
 locals {
   initial_core_network_policy = jsonencode({
-    "version": "2021.12",
-    "core-network-configuration": {
-      "vpn-ecmp-support": true,
-      "asn-ranges": [
-        "64512-65534"
-      ],
-      "edge-locations": [
+    version = "2021.12",
+    "core-network-configuration" = {
+      "vpn-ecmp-support" = true,
+      "asn-ranges" = ["64512-65534"],
+      "edge-locations" = [
         {
-          "location": "us-east-1",
-          "asn": 64512
+          location = "us-east-1",
+          asn = 64512
         },
         {
-          "location": "us-east-2",
-          "asn": 64513
+          location = "us-east-2",
+          asn = 64513
         }
       ]
     },
-    "segments": [
+    segments = [
       {
-        "name": "prod",
-        "require-attachment-acceptance": false
+        name = "prod",
+        "require-attachment-acceptance" = false
       },
-     {
-        "name": "non-prod",
-        "require-attachment-acceptance": false
+      {
+        name = "non-prod",
+        "require-attachment-acceptance" = false
       }
     ],
-    "network-function-groups": []
+    "segment-actions" = [
+      {
+        segment = "prod",
+        action = "create-route-table"
+      },
+      {
+        segment = "non-prod",
+        action = "create-route-table"
+      }
+    ],
+    "route-tables" = [
+      {
+        name = "prod-rt",
+        segment = "prod"
+      },
+      {
+        name = "non-prod-rt",
+        segment = "non-prod"
+      }
+    ],
+    "network-function-groups" = []
   })
 }
-
 
 # Attach the minimal policy to the Core Network
 resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment" {
