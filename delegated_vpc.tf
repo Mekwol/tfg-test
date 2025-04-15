@@ -80,7 +80,7 @@ resource "aws_subnet" "delegated_private_subnet1_region1" {
 
 # Create VPC in us-east-2 using the shared IPAM pool
 resource "aws_vpc" "delegated_vpc_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
 
   # Use the Region 2 Non-Production Pool
   ipv4_ipam_pool_id   = aws_vpc_ipam_pool.region2_nonprod.id
@@ -98,7 +98,7 @@ resource "aws_vpc" "delegated_vpc_region2" {
 
 # Create first public subnet in us-east-2 VPC
 resource "aws_subnet" "delegated_public_subnet1_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
   vpc_id   = aws_vpc.delegated_vpc_region2.id
 
   cidr_block        = cidrsubnet(aws_vpc.delegated_vpc_region2.cidr_block, 2, 0) # /23 subnet
@@ -116,7 +116,7 @@ resource "aws_subnet" "delegated_public_subnet1_region2" {
 
 # Create second public subnet in us-east-2 VPC
 resource "aws_subnet" "delegated_public_subnet2_region2" {
-  provider = aws.delegated_account
+  provider = aws.delegated_account-region2
   vpc_id   = aws_vpc.delegated_vpc_region2.id
 
   cidr_block        = cidrsubnet(aws_vpc.delegated_vpc_region2.cidr_block, 2, 1) # /23 subnet
