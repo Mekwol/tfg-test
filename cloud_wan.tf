@@ -88,7 +88,6 @@ resource "aws_networkmanager_core_network_policy_attachment" "policy_attachment"
 }
 
 # Attach VPCs to the Core Network 
-# Attach VPCs to the Core Network 
 resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
   provider        = aws.delegated_account
   subnet_arns     = [aws_subnet.delegated_private_subnet1_region1.arn]
@@ -108,6 +107,37 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
   subnet_arns     = [aws_subnet.delegated_private_subnet1_region2.arn]
   core_network_id = aws_networkmanager_core_network.core_network.id
   vpc_arn         = aws_vpc.delegated_vpc_region2.arn
+  
+  tags = {
+    Name        = "Region2-VPC-Attachment"
+    Environment = "Test"
+  }
+  
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+}
+
+
+
+# Attach VPCs to the Core Network 
+resource "aws_networkmanager_vpc_attachment" "region1_prod_attachment" {
+  provider = aws.tfg-test-account1-region1
+  subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  vpc_arn         = aws_vpc.region1_vpc.arn
+  
+  tags = {
+    Name        = "Region1-VPC-Attachment"
+    Environment = "Test"
+  }
+  
+  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+}
+
+resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
+   provider = aws.tfg-test-account1-region2
+  subnet_arns     = [aws_subnet.region2_private_subnet1.arn]
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  vpc_arn         = aws_vpc.region2_vpc.arn
   
   tags = {
     Name        = "Region2-VPC-Attachment"
