@@ -117,7 +117,7 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
 }
 
 
-# Attache cloud_wan to tfg-test-account
+# Attache cloud_wan to tfg-test-account vpc
 
 resource "aws_networkmanager_vpc_attachment" "tfg_test_account1_region1_attachment" {
   provider        = aws.tfg-test-account1-region1
