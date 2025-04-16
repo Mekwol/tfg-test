@@ -77,3 +77,53 @@ resource "aws_ram_principal_association" "ipam_account_principal" {
   resource_share_arn = aws_ram_resource_share.ipam_share.arn
   depends_on         = [time_sleep.wait_for_account_ready]
 }
+
+
+#########################################################################################
+
+# Share Cloud WAN Core Network
+resource "aws_ram_resource_share" "cloudwan_share" {
+  provider                  = aws.delegated_account
+  name                      = "cloudwan-resource-share"
+  allow_external_principals = false
+  
+  tags = {
+    Name        = "cloudwan-resource-share"
+    Environment = "shared"
+    ManagedBy   = "terraform"
+  }
+}
+
+# Associate Cloud WAN Core Network with RAM share
+resource "aws_ram_resource_association" "cloudwan_association" {
+  provider           = aws.delegated_account
+  resource_arn       = aws_networkmanager_core_network.core_network.arn
+  resource_share_arn = aws_ram_resource_share.cloudwan_share.arn
+}
+
+# Share with the test account
+resource "aws_ram_principal_association" "cloudwan_account_principal" {
+  provider           = aws.delegated_account
+  principal          = aws_organizations_account.tfg-test-account1.id
+  resource_share_arn = aws_ram_resource_share.cloudwan_share.arn
+  depends_on         = [time_sleep.wait_for_account_ready]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

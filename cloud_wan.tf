@@ -118,30 +118,71 @@ resource "aws_networkmanager_vpc_attachment" "region2_prod_attachment" {
 
 
 # Attache cloud_wan to tfg-test-account
+#resource "aws_networkmanager_vpc_attachment" "tfg_test_account1_region1_attachment" {
+ # provider        = aws.tfg-test-account1-region1
+  #subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
+  #core_network_id = aws_networkmanager_core_network.core_network.id
+  #vpc_arn         = aws_vpc.region1_vpc.arn
+  
+  #tags = {
+   # Name        = "TFG-Test-Account1-Region1-VPC-Attachment"
+    #Environment = "Test"
+  #}
+  
+  #depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+#}
+
+#resource "aws_networkmanager_vpc_attachment" "tfg_test_account1_region2_attachment" {
+ # provider        = aws.tfg-test-account1-region2
+  #subnet_arns     = [aws_subnet.region2_private_subnet1.arn]
+  #core_network_id = aws_networkmanager_core_network.core_network.id
+  #vpc_arn         = aws_vpc.region2_vpc.arn
+  
+  #tags = {
+   # Name        = "TFG-Test-Account1-Region2-VPC-Attachment"
+    #Environment = "Test"
+  #}
+  
+  #depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
+#}
+
+
+
+# Data source to get the shared core network in region1
+data "aws_networkmanager_core_network" "shared_core_network_region1" {
+  provider = aws.tfg-test-account1-region1
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  depends_on = [aws_ram_principal_association.cloudwan_account_principal]
+}
+
+# Data source to get the shared core network in region2
+data "aws_networkmanager_core_network" "shared_core_network_region2" {
+  provider = aws.tfg-test-account1-region2
+  core_network_id = aws_networkmanager_core_network.core_network.id
+  depends_on = [aws_ram_principal_association.cloudwan_account_principal]
+}
+
+# Create VPC attachments using the data sources
 resource "aws_networkmanager_vpc_attachment" "tfg_test_account1_region1_attachment" {
   provider        = aws.tfg-test-account1-region1
   subnet_arns     = [aws_subnet.region1_private_subnet1.arn]
-  core_network_id = aws_networkmanager_core_network.core_network.id
+  core_network_id = data.aws_networkmanager_core_network.shared_core_network_region1.id
   vpc_arn         = aws_vpc.region1_vpc.arn
   
   tags = {
     Name        = "TFG-Test-Account1-Region1-VPC-Attachment"
     Environment = "Test"
   }
-  
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
 
 resource "aws_networkmanager_vpc_attachment" "tfg_test_account1_region2_attachment" {
   provider        = aws.tfg-test-account1-region2
   subnet_arns     = [aws_subnet.region2_private_subnet1.arn]
-  core_network_id = aws_networkmanager_core_network.core_network.id
+  core_network_id = data.aws_networkmanager_core_network.shared_core_network_region2.id
   vpc_arn         = aws_vpc.region2_vpc.arn
   
   tags = {
     Name        = "TFG-Test-Account1-Region2-VPC-Attachment"
     Environment = "Test"
   }
-  
-  depends_on = [aws_networkmanager_core_network_policy_attachment.policy_attachment]
 }
