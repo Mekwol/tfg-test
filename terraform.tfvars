@@ -16,7 +16,7 @@ my_ip                = "66.98.96.0"
 linux_ip             = "3.87.110.50"
 
 
-shared_core_network_id = "core-network-0abc1234abcd5678f"
+shared_core_network_id = "8f12d545-60ec-4ca8-addd-69b6fd1aaff4"
 
 
 
