@@ -33,3 +33,8 @@ variable "delegated_account_id" {
   description = "AWS Account ID for delegated account where IPAM is created"
   type        = string
 }
+
+variable "shared_core_network_id" {
+  description = "ID of the shared Cloud WAN Core Network from the delegated account"
+  type        = string
+}
